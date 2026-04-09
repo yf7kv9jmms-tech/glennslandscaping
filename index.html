@@ -1,0 +1,1763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glenn's Landscaping | Hebron Hometown Heroes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --forest: #1b4332;
+            --grass: #2d6a4f;
+            --light-grass: #40916c;
+            --cream: #f8f6f1;
+            --earth: #5c4033;
+            --sunny: #d4a373;
+            --white: #ffffff;
+            --shadow: rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--cream);
+            color: var(--earth);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--forest);
+        }
+
+        /* Loading Screen */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--forest);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.6s ease, visibility 0.6s;
+        }
+
+        .loader-content {
+            text-align: center;
+            color: var(--white);
+        }
+
+        .grass-blade {
+            width: 6px;
+            height: 40px;
+            background: var(--light-grass);
+            margin: 0 3px;
+            display: inline-block;
+            animation: sway 1s ease-in-out infinite;
+            border-radius: 3px 3px 0 0;
+        }
+
+        .grass-blade:nth-child(2) { animation-delay: 0.1s; height: 50px; }
+        .grass-blade:nth-child(3) { animation-delay: 0.2s; height: 35px; }
+        .grass-blade:nth-child(4) { animation-delay: 0.3s; height: 45px; }
+        .grass-blade:nth-child(5) { animation-delay: 0.4s; height: 40px; }
+
+        @keyframes sway {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        .loader-text {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            transition: all 0.4s ease;
+            background: transparent;
+        }
+
+        nav.scrolled {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px var(--shadow);
+            padding: 15px 5%;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: color 0.3s;
+        }
+
+        nav.scrolled .logo {
+            color: var(--forest);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--sunny);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--white);
+            font-weight: 500;
+            font-size: 0.95rem;
+            position: relative;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        nav.scrolled .nav-links a {
+            color: var(--forest);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--sunny);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .mobile-menu {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .mobile-menu span {
+            width: 25px;
+            height: 3px;
+            background: var(--white);
+            transition: 0.3s;
+        }
+
+        nav.scrolled .mobile-menu span {
+            background: var(--forest);
+        }
+
+        /* Page Sections */
+        .page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            overflow-y: auto;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.6s ease, visibility 0.6s;
+            padding-top: 80px;
+        }
+
+        .page.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Home Page */
+        #home {
+            padding-top: 0;
+        }
+
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, rgba(27,67,50,0.8), rgba(45,106,79,0.7)), 
+                        url('https://kimi-web-img.moonshot.cn/img/www.libertylawngarden.com/64a11175e1bcf0b11ae8d416d2a30f787a4d673e.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            z-index: 2;
+            animation: fadeInUp 1s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            margin-bottom: 20px;
+            color: var(--white);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: slideInLeft 1s ease 0.3s both;
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            opacity: 0.95;
+            animation: slideInRight 1s ease 0.5s both;
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .hero-location {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.2);
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            animation: fadeIn 1s ease 0.7s both;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 18px 40px;
+            background: var(--sunny);
+            color: var(--earth);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: fadeIn 1s ease 0.9s both;
+            border: 2px solid transparent;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            background: var(--white);
+            border-color: var(--sunny);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            cursor: pointer;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        .scroll-indicator::before {
+            content: '↓';
+            font-size: 2rem;
+            color: var(--white);
+        }
+
+        /* Home Content Sections */
+        .content-section {
+            padding: 100px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: var(--sunny);
+            border-radius: 2px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--light-grass);
+            margin-bottom: 60px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .feature-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow);
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .feature-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        /* Story Page */
+        .story-hero {
+            background: linear-gradient(135deg, rgba(92,64,51,0.9), rgba(45,106,79,0.8)),
+                        url('https://kimi-web-img.moonshot.cn/img/d1ivb2c2d81ilf.cloudfront.net/069b1d77edb3fdf41510339020b156b23c5f9b64.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--white);
+            position: relative;
+        }
+
+        .story-content {
+            padding: 80px 5%;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .story-text {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .story-text.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .highlight-box {
+            background: var(--forest);
+            color: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            margin: 60px 0;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.6s ease;
+        }
+
+        .highlight-box.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .highlight-box::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 8rem;
+            opacity: 0.2;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .team-card {
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .team-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .team-photo {
+            width: 200px;
+            height: 200px;
+            background: var(--light-grass);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            border: 5px solid var(--sunny);
+            transition: transform 0.3s ease;
+        }
+
+        .team-card:hover .team-photo {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .team-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .team-role {
+            color: var(--light-grass);
+            font-weight: 600;
+        }
+
+        /* Services Page */
+        .services-hero {
+            background: linear-gradient(135deg, rgba(45,106,79,0.9), rgba(64,145,108,0.8));
+            height: 50vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            padding: 80px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .service-card {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px var(--shadow);
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+
+        .service-card:nth-child(even) {
+            transform: translateX(30px);
+        }
+
+        .service-card.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .service-image {
+            height: 250px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.6));
+        }
+
+        .service-content {
+            padding: 30px;
+        }
+
+        .service-content h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .price-tag {
+            display: inline-block;
+            background: var(--sunny);
+            color: var(--earth);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+
+        /* Gallery Page */
+        .gallery-hero {
+            background: linear-gradient(135deg, rgba(212,163,115,0.9), rgba(45,106,79,0.8));
+            height: 50vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            padding: 80px 5%;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px var(--shadow);
+            cursor: pointer;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.6s ease;
+        }
+
+        .gallery-item.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(27,67,50,0.9), transparent);
+            color: var(--white);
+            padding: 30px;
+            transform: translateY(100%);
+            transition: transform 0.4s ease;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+
+        /* Contact Page */
+        .contact-hero {
+            background: linear-gradient(135deg, rgba(27,67,50,0.9), rgba(92,64,51,0.8));
+            height: 50vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            padding: 80px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .contact-info h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+
+        .contact-detail {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.4s ease;
+        }
+
+        .contact-detail.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--forest);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .contact-form {
+            background: var(--white);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease;
+        }
+
+        .form-group.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--forest);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--grass);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: var(--forest);
+            color: var(--white);
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .submit-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .submit-btn:hover {
+            background: var(--grass);
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--forest);
+            color: var(--white);
+            padding: 60px 5% 30px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--white);
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+            cursor: pointer;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 20px;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .section-title { font-size: 2rem; }
+            .nav-links { display: none; }
+            .mobile-menu { display: flex; }
+            .contact-container { grid-template-columns: 1fr; }
+            .gallery-grid { grid-template-columns: 1fr; }
+            .services-grid { grid-template-columns: 1fr; }
+            .story-hero h1 { font-size: 2.5rem; }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 1s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Before/After Comparison Slider */
+        .comparison-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 40px auto;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px var(--shadow);
+        }
+
+        .comparison-image {
+            width: 100%;
+            display: block;
+        }
+
+        .resize-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 50%;
+            overflow: hidden;
+            border-right: 3px solid var(--white);
+        }
+
+        .resize-image img {
+            height: 100%;
+            max-width: none;
+            width: auto;
+            min-width: 100%;
+        }
+
+        .slider-handle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            background: var(--white);
+            border-radius: 50%;
+            cursor: ew-resize;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    <div id="loader">
+        <div class="loader-content">
+            <div class="grass-animation">
+                <div class="grass-blade"></div>
+                <div class="grass-blade"></div>
+                <div class="grass-blade"></div>
+                <div class="grass-blade"></div>
+                <div class="grass-blade"></div>
+            </div>
+            <div class="loader-text">GLENN'S LANDSCAPING</div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <a href="#" class="logo" onclick="showPage('home')">
+            <div class="logo-icon">🌿</div>
+            Glenn's Landscaping
+        </a>
+        <ul class="nav-links">
+            <li><a onclick="showPage('home')" class="nav-link active" data-page="home">Home</a></li>
+            <li><a onclick="showPage('story')" class="nav-link" data-page="story">Our Story</a></li>
+            <li><a onclick="showPage('services')" class="nav-link" data-page="services">Services</a></li>
+            <li><a onclick="showPage('gallery')" class="nav-link" data-page="gallery">Gallery</a></li>
+            <li><a onclick="showPage('contact')" class="nav-link" data-page="contact">Contact</a></li>
+        </ul>
+        <div class="mobile-menu" onclick="toggleMobileMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Home Page -->
+    <section id="home" class="page active">
+        <div class="hero">
+            <div class="hero-content">
+                <h1>Glenn's Landscaping</h1>
+                <p class="hero-subtitle">Three Friends. One Summer. A Legacy of Green.</p>
+                <div class="hero-location">
+                    <span>📍</span>
+                    <span>Serving Hebron & Surrounding Areas</span>
+                </div>
+                <br>
+                <a href="#" class="cta-button"deg, rgba(92,64,51,0.9), rgba(45,106,79,0.8)),
+                        url('https://kimi-web-img.moonshot.cn/img/d1ivb2c2d81ilf.cloudfront.net/069b1d77edb3fdf41510339020b156b23c5f9b64.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--white);
+            position: relative;
+        }
+
+        .story-content {
+            padding: 80px 5%;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .story-text {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .story-text.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .highlight-box {
+            background: var(--forest);
+            color: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            margin: 60px 0;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.6s ease;
+        }
+
+        .highlight-box.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .highlight-box::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 8rem;
+            opacity: 0.2;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .team-card {
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .team-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .team-photo {
+            width: 200px;
+            height: 200px;
+            background: var(--light-grass);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            border: 5px solid var(--sunny);
+            transition: transform 0.3s ease;
+        }
+
+        .team-card:hover .team-photo {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .team-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .team-role {
+            color: var(--light-grass);
+            font-weight: 600;
+        }
+
+        /* Services Page */
+        .services-hero {
+            background: linear-gradient(135deg, rgba(45,106,79,0.9), rgba(64,145,108,0.8));
+            height: 50vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            padding: 80px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .service-card {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px var(--shadow);
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+
+        .service-card:nth-child(even) {
+            transform: translateX(30px);
+        }
+
+        .service-card.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .service-image {
+            height: 250px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.6));
+        }
+
+        .service-content {
+            padding: 30px;
+        }
+
+        .service-content h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .price-tag {
+            display: inline-block;
+            background: var(--sunny);
+            color: var(--earth);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+
+        /* Gallery Page */
+        .gallery-hero {
+            background: linear-gradient(135deg, rgba(212,163,115,0.9), rgba(45,106,79,0.8));
+            height: 50vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            padding: 80px 5%;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px var(--shadow);
+            cursor: pointer;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.6s ease;
+        }
+
+        .gallery-item.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(27,67,50,0.9), transparent);
+            color: var(--white);
+            padding: 30px;
+            transform: translateY(100%);
+            transition: transform 0.4s ease;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+
+        /* Contact Page */
+        .contact-hero {
+            background: linear-gradient(135deg, rgba(27,67,50,0.9), rgba(92,64,51,0.8));
+            height: 50vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            padding: 80px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .contact-info h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+
+        .contact-detail {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.4s ease;
+        }
+
+        .contact-detail.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--forest);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .contact-form {
+            background: var(--white);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease;
+        }
+
+        .form-group.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--forest);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--grass);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: var(--forest);
+            color: var(--white);
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .submit-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .submit-btn:hover {
+            background: var(--grass);
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--forest);
+            color: var(--white);
+            padding: 60px 5% 30px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--white);
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+            cursor: pointer;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 20px;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .section-title { font-size: 2rem; }
+            .nav-links { display: none; }
+            .mobile-menu { display: flex; }
+            .contact-container { grid-template-columns: 1fr; }
+            .gallery-grid { grid-template-columns: 1fr; }
+            .services-grid { grid-template-columns: 1fr; }
+            .story-hero h1 { font-size: 2.5rem; }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 1s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Before/After Comparison Slider */
+        .comparison-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 40px auto;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px var(--shadow);
+        }
+
+        .comparison-image {
+            width: 100%;
+            display: block;
+        }
+
+        .resize-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 50%;
+            overflow: hidden;
+            border-right: 3px solid var(--white);
+        }
+
+        .resize-image img {
+            height: 100%;
+            max-width: none;
+            width: auto;
+            min-width: 100%;
+        }
+
+        .slider-handle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            background: var(--white);
+            border-radius: 50%;
+            cursor: ew-resize;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    <div id="loader">
+        <div class="loader-content">
+            <div class="grass-animation">
+                <div class="grass-blade"></div>
+                <div class="grass-blade"></div>
+                <div class="grass-blade"></div>
+                <div class="grass-blade"></div>
+                <div class="grass-blade"></div>
+            </div>
+            <div class="loader-text">GLENN'S LANDSCAPING</div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <a href="#" class="logo" onclick="showPage('home')">
+            <div class="logo-icon">🌿</div>
+            Glenn's Landscaping
+        </a>
+        <ul class="nav-links">
+            <li><a onclick="showPage('home')" class="nav-link active" data-page="home">Home</a></li>
+            <li><a onclick="showPage('story')" class="nav-link" data-page="story">Our Story</a></li>
+            <li><a onclick="showPage('services')" class="nav-link" data-page="services">Services</a></li>
+            <li><a onclick="showPage('gallery')" class="nav-link" data-page="gallery">Gallery</a></li>
+            <li><a onclick="showPage('contact')" class="nav-link" data-page="contact">Contact</a></li>
+        </ul>
+        <div class="mobile-menu" onclick="toggleMobileMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Home Page -->
+    <section id="home" class="page active">
+        <div class="hero">
+            <div class="hero-content">
+                <h1>Glenn's Landscaping</h1>
+                <p class="hero-subtitle">Three Friends. One Summer. A Legacy of Green.</p>
+                <div class="hero-location">
+                    <span>📍</span>
+                    <span>Serving Hebron & Surrounding Areas</span>
+                </div>
+                <br>
+                <a href="#" class="cta-button" onclick="showPage('contact'); return false;">Get Your Free Quote</a>
+            </div>
+            <div class="scroll-indicator" onclick="document.getElementById('home-content').scrollIntoView({behavior: 'smooth'})"></div>
+        </div>
+
+        <div id="home-content" class="content-section">
+            <h2 class="section-title">Hometown Roots, Professional Results</h2>
+            <p class="section-subtitle">From Grandpa Glenn's backyard to yours</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">👨‍🌾</div>
+                    <h3>Learned from the Best</h3>
+                    <p>We learned everything we know from Spencer's grandpa Glenn, a Hebron legend with 40+ years of landscaping wisdom. Those summer days taught us more than just mowing—they taught us pride in our work.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏡</div>
+                    <h3>Local & Loyal</h3>
+                    <p>Born and raised in Hebron, we treat every yard like it's our own grandma's. No corporate crews here—just three friends who grew up playing Little League together.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💪</div>
+                    <h3>Hard Work Guaranteed</h3>
+                    <p>Grandpa Glenn didn't raise slackers. We show up early, work hard, and don't leave until the job is done right. That's the Glenn Guarantee.</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 100px; text-align: center;">
+                <h2 class="section-title">Ready to Transform Your Yard?</h2>
+                <p style="font-size: 1.2rem; margin-bottom: 30px;">Let's make Grandpa Glenn proud.</p>
+                <a href="#" class="cta-button" onclick="showPage('contact'); return false;">Start Your Project</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Story Page -->
+    <section id="story" class="page">
+        <div class="story-hero">
+            <div>
+                <h1>Our Story</h1>
+                <p style="font-size: 1.3rem; margin-top: 20px;">It all started with Grandpa Glenn's riding mower...</p>
+            </div>
+        </div>
+
+        <div class="story-content">
+            <p class="story-text">
+                Back in the summer of '23, three high school friends found themselves looking for honest work in Hebron. Spencer's grandpa Glenn—known by everyone in town as the guy with the greenest lawn on Maple Street—needed help keeping up with his growing landscaping business.
+            </p>
+
+            <p class="story-text">
+                That's how Larsen, Spencer, and Josh ended up spending their summer sweating under the Ohio sun, learning the difference between a weed and a wildflower, and discovering that perfect lawn stripes require both science and art.
+            </p>
+
+            <div class="highlight-box">
+                <p style="font-size: 1.3rem; font-style: italic; position: relative; z-index: 1;">
+                    "A lawn isn't just grass—it's the first handshake your home gives to the world. Make it firm, make it warm, and make it green."
+                </p>
+                <p style="margin-top: 20px; opacity: 0.8;">— Grandpa Glenn's Golden Rule</p>
+            </div>
+
+            <p class="story-text">
+                By August, we realized we'd caught the landscaping bug. More importantly, we'd caught Grandpa Glenn's passion for transforming outdoor spaces. When he retired that fall, he didn't just pass us his equipment—he passed us his reputation.
+            </p>
+
+            <p class="story-text">
+                Now, Glenn's Landscaping is Hebron's newest (and hardest working) lawn care company. We might be young, but we've got 40 years of Glenn wisdom backing us up, and we've got each other.
+            </p>
+
+            <h2 style="text-align: center; margin-top: 80px; margin-bottom: 40px; font-size: 2.5rem;">Meet the Crew</h2>
+
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-photo">👨‍🦱</div>
+                    <h3>Larsen</h3>
+                    <p class="team-role">The Detail Guy</p>
+                    <p style="margin-top: 10px; font-size: 0.9rem;">Obsessive about edge work and responsible for perfecting the "Glenn Stripes"</p>
+                </div>
+                <div class="team-card">
+                    <div class="team-photo">👦</div>
+                    <h3>Spencer</h3>
+                    <p class="team-role">The Legacy</p>
+                    <p style="margin-top: 10px; font-size: 0.9rem;">Grandpa's grandson carrying on the family tradition with pride</p>
+                </div>
+                <div class="team-card">
+                    <div class="team-photo">👨</div>
+                    <h3>Josh</h3>
+                    <p class="team-role">The Muscle</p>
+                    <p style="margin-top: 10px; font-size: 0.9rem;">Tree trimming specialist and mulch-spreading champion</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Page -->
+    <section id="services" class="page">
+        <div class="services-hero">
+            <div>
+                <h1>Our Services</h1>
+                <p style="font-size: 1.3rem; margin-top: 20px;">Everything we learned from Grandpa Glenn, now available for your yard</p>
+            </div>
+        </div>
+
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-image" style="background-image: url('https://kimi-web-img.moonshot.cn/img/www.libertylawngarden.com/47664aeabf3e4c3674a1decedd623bf49a12e872.jpg');">
+                </div>
+                <div class="service-content">
+                    <h3>🌱 Lawn Mowing</h3>
+                    <p>Weekly or bi-weekly mowing with precision striping. We alternate patterns so your grass stays healthy and looks like a ballpark.</p>
+                    <span class="price-tag">Starting at $40/visit</span>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div class="service-image" style="background-image: url('https://kimi-web-img.moonshot.cn/img/ambrosiolandscapes.com/be2f10035e61d657fb442e408c34538347ea90d5.jpg');">
+                </div>
+                <div class="service-content">
+                    <h3>✂️ Hedge Trimming</h3>
+                    <p>Sculpted shrubs and tidy hedges. We clean up the clippings so well, you'd never know we were there—except for the perfect lines.</p>
+                    <span class="price-tag">Starting at $75</span>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div class="service-image" style="background-image: url('https://kimi-web-img.moonshot.cn/img/gardenary-data.s3.amazonaws.com/329d5e0fd5365872708dfcb260d97178023707e3.png');">
+                </div>
+                <div class="service-content">
+                    <h3>🍂 Mulching</h3>
+                    <p>Premium hardwood mulch delivery and installation. We edge the beds first, lay fabric if needed, and spread it like we mean it.</p>
+                    <span class="price-tag">$65/yard installed</span>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div class="service-image" style="background-image: url('https://kimi-web-img.moonshot.cn/img/www.ziprecruiter.com/a9c8f01e9e99daed4edc327f0276e28573d30f7d.jpg');">
+                </div>
+                <div class="service-content">
+                    <h3>🌳 Spring/Fall Cleanup</h3>
+                    <p>Seasonal deep cleaning including leaf removal, bed prep, gutter clearing, and getting your property ready for the changing weather.</p>
+                    <span class="price-tag">Starting at $150</span>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div class="service-image" style="background-image: url('https://kimi-web-img.moonshot.cn/img/gardenary-data.s3.amazonaws.com/198651f58701eb59878152e8ee24dcab7c650943.png');">
+                </div>
+                <div class="service-content">
+                    <h3>🏗️ Hardscaping</h3>
+                    <p>Stone walkways, retaining walls, and paver patios. Grandpa Glenn taught us that good bones make for great gardens.</p>
+                    <span class="price-tag">Custom Quotes</span>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div class="service-image" style="background-image: url('https://kimi-web-img.moonshot.cn/img/pristinelandscapingandlighting.com/b8104d4eba9cdc261b22434fe68da9bde1865782.jpg');">
+                </div>
+                <div class="service-content">
+                    <h3>🚜 Full Property Maintenance</h3>
+                    <p>Weekly mowing, trimming, blowing, plus seasonal fertilizing and weed control. The full Glenn treatment.</p>
+                    <span class="price-tag">Monthly Packages</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Page -->
+    <section id="gallery" class="page">
+        <div class="gallery-hero">
+            <div>
+                <h1>Our Work</h1>
+                <p style="font-size: 1.3rem; margin-top: 20px;">Proof that Grandpa Glenn taught us well</p>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">Before & After</h2>
+            <p class="section-subtitle">Drag to see the transformations</p>
+
+            <div class="comparison-container" id="comparison1">
+                <img src="https://kimi-web-img.moonshot.cn/img/gardenary-data.s3.amazonaws.com/329d5e0fd5365872708dfcb260d97178023707e3.png" class="comparison-image" alt="Before">
+                <div class="resize-image">
+                    <img src="https://kimi-web-img.moonshot.cn/img/gardenary-data.s3.amazonaws.com/198651f58701eb59878152e8ee24dcab7c650943.png" alt="After" style="width: 800px; height: auto;">
+                </div>
+                <div class="slider-handle">↔</div>
+            </div>
+        </div>
+
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img src="https://kimi-web-img.moonshot.cn/img/www.libertylawngarden.com/64a11175e1bcf0b11ae8d416d2a30f787a4d673e.jpg" alt="Perfect Lawn">
+                <div class="gallery-overlay">
+                    <h3>The Miller Residence</h3>
+                    <p>Weekly maintenance & seasonal color</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://kimi-web-img.moonshot.cn/img/gardenary-data.s3.amazonaws.com/7b994b5878d184cd82960a2c3e4b27fa2451cfdb.png" alt="Garden Transformation">
+                <div class="gallery-overlay">
+                    <h3>Hebron Historical Society</h3>
+                    <p>Full landscape renovation</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://kimi-web-img.moonshot.cn/img/ambrosiolandscapes.com/be2f10035e61d657fb442e408c34538347ea90d5.jpg" alt="Hedge Work">
+                <div class="gallery-overlay">
+                    <h3>Oak Street Estate</h3>
+                    <p>Precision hedge sculpting</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://kimi-web-img.moonshot.cn/img/cdn.prod.website-files.com/3759c62fc18dadf32b8544a352307acc224d20b5.jpeg" alt="Team Work">
+                <div class="gallery-overlay">
+                    <h3>The Crew in Action</h3>
+                    <p>Grandpa Glenn would be proud</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Page -->
+    <section id="contact" class="page">
+        <div class="contact-hero">
+            <div>
+                <h1>Get In Touch</h1>
+                <p style="font-size: 1.3rem; margin-top: 20px;">Let's talk about your yard</p>
+            </div>
+        </div>
+
+        <div class="contact-container">
+            <div class="contact-info">
+                <h2>Contact Info</h2>
+                
+                <div class="contact-detail">
+                    <div class="contact-icon">📍</div>
+                    <div>
+                        <strong>Location</strong><br>
+                        Hebron, OH 43025<br>
+                        <small>Serving 25 mile radius</small>
+                    </div>
+                </div>
+
+                <div class="contact-detail">
+                    <div class="contact-icon">📞</div>
+                    <div>
+                        <strong>Phone</strong><br>
+                        (740) 555-LAWN<br>
+                        <small>Text or call anytime</small>
+                    </div>
+                </div>
+
+                <div class="contact-detail">
+                    <div class="contact-icon">✉️</
